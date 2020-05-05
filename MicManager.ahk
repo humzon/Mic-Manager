@@ -95,7 +95,7 @@
         ;=======================================================
         ;Volume Meter and tap to talk timeout bar
         ;{======================================================
-        Gui, Add, Progress, vVolumeLevel h5 w123 x14 y54 Background%GuiBkgdColor% c%BtnSymbolColor%,
+        Gui, Add, Progress, vVolumeLevel h5 w123 x14 y54 Background%GuiBkgdColor% cLime, 
         Gui, Add, Progress, vTimeoutProgress h5 w123 x14 yp+4 Background%GuiBkgdColor% cBlue,
         ;}
         ;=======================================================
