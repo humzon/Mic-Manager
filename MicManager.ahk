@@ -12,6 +12,7 @@
     Menu, Tray, Add, Open,ShowGui
     Menu, Tray, Add, Options,OptionsGui
     Menu, Tray, Add, Open Sound Control Panel,SysCtrlPnl
+    Menu, Tray, Add, Reload,ReloadApp
     Menu, Tray, Add, Exit,CloseApp
     Menu, Tray,Default,Open
     ;=======================================================
@@ -285,6 +286,10 @@
 
         SysCtrlPnl: ;launches the system sound control panel
             Run rundll32.exe shell32.dll`,Control_RunDLL mmsys.cpl`,`,1
+        return
+
+        ReloadApp: ; reload app
+            Reload
         return
         
         OptionsGuiEscape:
