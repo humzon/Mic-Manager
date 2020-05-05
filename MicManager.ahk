@@ -76,7 +76,7 @@
         ;Mode Button
         ;{======================================================
         Gui, Add, Progress,vModeBtn_Bkg w34 h34 xp+45 yp+2 Background%BtnBorderColor%
-        ModeBtn_Bkg_TT := "Click or quickly double press CapsLock to toggle modes`nCurrent Mode: " . ModeDesc[Mode]
+        ModeBtn_Bkg_TT := "Current Mode: " . ModeDesc[Mode]
         Gui, Add, Progress,vModeBtn xp+2 yp+2 w30 h30 Background%GuiBkgdColor%
         Gui, Font, s20 norm, WingDings
         Gui, Add, Text,w30 xp yp-1 BackgroundTrans c%BtnSymbolColor% vModeBtn_Symbol1 ,% Chr(55) ;Tap to toggle -default mode
@@ -140,7 +140,6 @@
 ;Hotkeys
 ;{======================================================
     ; I think capslock is the best key to use here. Press it once to toggle mute
-    ; Press it twice within 250 miliseconds to toggle the mode
     ; To send the native capslock function, just hold any other modifying key like
     ; control, shift, alt, or the windows key and press capslock.
     $CapsLock::
@@ -159,10 +158,6 @@
         if (key_presses = 1) ; The key was pressed once.
         {
             (Mode = 1 ? ToggleMute() : (Mode = 2 ? HoldToTalk(): TapToTalk()))
-        }
-        else if (key_presses = 2) ; The key was pressed twice so send the normal key function
-        {
-            ToggleMode()
         }
         ; Regardless of which action above was triggered, reset the count to prepare for the next series of presses:
         key_presses := 0
@@ -612,7 +607,7 @@
             GuiControl,Main:,TimeoutProgress, 0
             GuiControl,Main:Hide1,ModeBtn_Symbol%Mode% ;hide the current mode before incrementing
             GuiControl,Main:Hide0,% "ModeBtn_Symbol" . (Mode > 2 ? Mode := 1:Mode := Mode+1) ;increment the mode by one, unless it's 3, in that case make it 1 then show the current mode symbol
-            ModeBtn_Bkg_TT := "Click or quickly double press CapsLock to toggle modes`nCurrent Mode: " . ModeDesc[Mode] ;update the tooltip with the current mode description	
+            ModeBtn_Bkg_TT := "Current Mode: " . ModeDesc[Mode] ;update the tooltip with the current mode description	
             if (Mode <> 1) ;if the mode is changed to hold to talk or tap to talk, the device should default to muted for the modes to function properly
                 SoundSet, 1, Master, Mute, %selected_id_num%
             if (Mode = 2)
