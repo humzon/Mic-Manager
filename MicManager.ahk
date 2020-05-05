@@ -101,15 +101,15 @@
         ;=======================================================
         ;Close Button
         ;{======================================================
-        Gui, Font, s15 norm, Wingdings
+        Gui, Font, s12 norm, Wingdings 2
         Gui, Add, Progress,vCloseBtn x135 y0 w15 h14 Background%GuiBkgdColor%
-        Gui, Add, Text,w30 h15 xp+1 yp-4 BackgroundTrans c%BtnSymbolColor% vCloseBtn_Symbol1,% Chr(251)
+        Gui, Add, Text,w30 h15 xp+1 yp-1 BackgroundTrans c%BtnSymbolColor% vCloseBtn_Symbol1,% Chr(209)
         CloseBtn_TT := "Click to close the application" ;}
         ;=======================================================
         ;Minimize Button
         ;{======================================================        
         Gui, Font, s20, Verdana
-        Gui, Add, Progress,vMinimizeBtn xp-16 yp+4 w15 h14 Background%GuiBkgdColor%
+        Gui, Add, Progress,vMinimizeBtn xp-16 yp+1 w15 h14 Background%GuiBkgdColor%
         Gui, Add, Text, xp+1 yp-11 BackgroundTrans c%BtnSymbolColor% vMinimizeBtn_Symbol1,-
         MinimizeBtn_TT := "Click to minimize the window to the system tray" ;}
         ;=======================================================
