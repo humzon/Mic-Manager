@@ -49,7 +49,7 @@
     ;=======================================================
     ;Load settings from the ini file
     ;{======================================================
-    SavedSettings := {"PlayMuteSound":0,"TTTThreshold":TTTThreshold,"TTTTimeout":TTTTimeout,"selected_id":"","LastPosX":"","LastPosY":""} ;Object containing the list of variables that can be saved to the ini file, name of the variable and it's default value
+    SavedSettings := {"PlayMuteSound":0,"PlayUnMuteSound":0,"TTTThreshold":TTTThreshold,"TTTTimeout":TTTTimeout,"selected_id":"","LastPosX":"","LastPosY":""} ;Object containing the list of variables that can be saved to the ini file, name of the variable and it's default value
     for var,default_val in SavedSettings
         IniRead,%var%,%IniFile%,settings,%var%,%default_val%
     SysGet, ScreenWidth, 78
@@ -202,7 +202,8 @@
             Gui, Options:Add, Edit, vCommand  r5 ReadOnly -Wrap -VScroll w515 Center disabled, % StartMsg
             Gui, Options:Font
             Gui, Options:Add, Button, gSysCtrlPnl xm+100 y+5 vSysCtrlPnlBtnText , Open sound control panel
-            Gui, Options:Add, Checkbox, vPlayMuteSound gPlayMuteSound Checked%PlayMuteSound% x+15 yp+5, Play a sound when the mute status changes
+            Gui, Options:Add, Checkbox, vPlayMuteSound gPlayMuteSound Checked%PlayMuteSound% x+15 yp+5, Play sound when muted
+            Gui, Options:Add, Checkbox, vPlayUnMuteSound gPlayUnMuteSound Checked%PlayUnMuteSound% x+15 yp+5, Play sound when unmute
             Gui, Options:Add, ListView, vDeviceLV gDeviceLV AltSubmit r6 w515 xm, #|System Default|Selected|Name|Adapter|ID
             Gui, Options:Add, Text,xm+37 y+15 gVolumeText vVolumeText ,Volume:
             VolumeText_TT := "Current device input volume. Move the slider to adjust."
@@ -305,6 +306,7 @@
         ;Inorder for WM_MOUSEMOVE() to register when the mouse is over a text control there needs to be an associated label
         ;Even though these are blank, without them the tooltips wouldn't been shown when the mouse hovers over the text
         PlayMuteSound:
+        PlayUnMuteSound:
         TTTSlider:
         TTTTimeoutText:
         TTTText:
@@ -347,8 +349,15 @@
         UpdateMuteStatus:
             SoundGet,MuteStatus,Master,Mute,selected_id_num
             if (MuteStatus <> PrevMuteStatus) {
-                if PlayMuteSound and ShowOptionGui ;the additional check to see if ShowOptionGui is true prevents the sound from being played when the initial mute status is set
-                    SoundPlay, % A_WinDir "\Media\Speech " (MuteStatus = "On" ? "Sleep" : "On") ".wav"
+                if (ShowOptionGui) { ;the additional check to see if ShowOptionGui is true prevents the sound from being played when the initial mute status is set
+                    if (PlayMuteSound and MuteStatus = "On") { 
+                        ; play mute sound
+                        SoundPlay, % A_WinDir "\Media\Speech Sleep.wav"
+                    } else if (PlayUnMuteSound and MuteStatus = "Off") {
+                        ; play unmute sound
+                        SoundPlay, % A_WinDir "\Media\Speech On.wav"
+                    }
+                }
                 Guicontrol,% "Main: Hide"(MuteStatus = "On" ? 0:1),MicBtn_Mute
                 PrevMuteStatus := MuteStatus
             }
