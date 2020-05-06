@@ -49,7 +49,7 @@
     ;=======================================================
     ;Load settings from the ini file
     ;{======================================================
-    SavedSettings := {"PlayMuteSound":0,"PlayUnMuteSound":0,"TTTThreshold":TTTThreshold,"TTTTimeout":TTTTimeout,"selected_id":"","LastPosX":"","LastPosY":""} ;Object containing the list of variables that can be saved to the ini file, name of the variable and it's default value
+    SavedSettings := {"PlayMuteSound":0,"PlayUnMuteSound":0,"PlayMuteReminderTone":1,"TTTThreshold":TTTThreshold,"TTTTimeout":TTTTimeout,"selected_id":"","LastPosX":"","LastPosY":""} ;Object containing the list of variables that can be saved to the ini file, name of the variable and it's default value
     for var,default_val in SavedSettings
         IniRead,%var%,%IniFile%,settings,%var%,%default_val%
     SysGet, ScreenWidth, 78
@@ -121,6 +121,7 @@
     gosub OptionsGui ;build the options gui(but don't show it) to establish a list of available devices, if a selected_id is saved check if it exists on the system, if not choose the default device
     Start_Audio_Meter(selected_id) ;Now that the we know the selected_id (from building the OptionsGui), start the audio stream to monitor the mic input level so we can update the volume feedback progress bar
     SetTimer,UpdateMuteStatus,200 ;start the timer that looks for changes to the selected_id mute status
+    SetTimer,MuteReminderTone,10000 
     Gosub, UpdateMuteStatus ;The UpdateMuteStatus timer won't run for 200 miliseconds so run the sub now so we can update the mute status button before showing the gui
     ShowOptionGui := true ;Set this to true so the next time the OptionsGui label is ran the Gui will be shown
     Gui, Main:Show,% "w150 h65" . (LastPosX <> "" and LastPosY <> "" ? " x" . LastPosX . " y" . LastPosY : "") ;if both x and y coordinates of the last position of the window have been loaded from the iniFile, show the window at that position, if not, the window will be shown at the default location
@@ -198,7 +199,8 @@
             Gui, Options:Font
             Gui, Options:Add, Button, gSysCtrlPnl xm+100 y+5 vSysCtrlPnlBtnText , Open sound control panel
             Gui, Options:Add, Checkbox, vPlayMuteSound gPlayMuteSound Checked%PlayMuteSound% x+15 yp+5, Play sound when muted
-            Gui, Options:Add, Checkbox, vPlayUnMuteSound gPlayUnMuteSound Checked%PlayUnMuteSound% x+15 yp+5, Play sound when unmute
+            Gui, Options:Add, Checkbox, vPlayUnMuteSound gPlayUnMuteSound Checked%PlayUnMuteSound% xp-0 y+5, Play sound when unmute
+            Gui, Options:Add, Checkbox, vPlayMuteReminderTone gPlayMuteReminderTone Checked%PlayMuteReminderTone% xp-0 y+5, Play mute reminder tone every 10 sec
             Gui, Options:Add, ListView, vDeviceLV gDeviceLV AltSubmit r6 w515 xm, #|System Default|Selected|Name|Adapter|ID
             Gui, Options:Add, Text,xm+37 y+15 gVolumeText vVolumeText ,Volume:
             VolumeText_TT := "Current device input volume. Move the slider to adjust."
@@ -302,6 +304,7 @@
         ;Even though these are blank, without them the tooltips wouldn't been shown when the mouse hovers over the text
         PlayMuteSound:
         PlayUnMuteSound:
+        PlayMuteReminderTone:
         TTTSlider:
         TTTTimeoutText:
         TTTText:
@@ -355,6 +358,18 @@
                 }
                 Guicontrol,% "Main: Hide"(MuteStatus = "On" ? 0:1),MicBtn_Mute
                 PrevMuteStatus := MuteStatus
+            }
+        return
+
+        ; Name: MuteReminderTone Timer
+        ; Triggered By: Auto execution
+        ; Condition: 
+        ; Interval: 10sec
+        ; Description: 
+        ; ---------------------------------------
+        MuteReminderTone:
+        	if (PlayMuteReminderTone and MuteStatus = "On") { 
+             	SoundPlay, % A_WinDir "\Media\Speech Off.wav"
             }
         return
         ; ---------------------------------------
